@@ -30,12 +30,14 @@ import tech.beshu.ror.requestcontext.RequestContext;
 import tech.beshu.ror.settings.rules.IndicesRuleSettings;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Collections.singletonList;
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Mockito.when;
 
 /**
@@ -136,8 +138,8 @@ public class IndicesRuleTests {
     when(rc.isReadRequest()).thenReturn(true);
 
     SyncRule r = new IndicesSyncRule(
-      IndicesRuleSettings.from(Sets.newHashSet(configured)),
-      MockedESContext.INSTANCE
+        IndicesRuleSettings.from(Sets.newHashSet(configured)),
+        MockedESContext.INSTANCE
     );
 
     return r.match(rc);

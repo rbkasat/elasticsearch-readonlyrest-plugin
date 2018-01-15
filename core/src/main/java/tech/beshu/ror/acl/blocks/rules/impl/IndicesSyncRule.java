@@ -62,16 +62,16 @@ public class IndicesSyncRule extends SyncRule {
   public RuleExitResult match(RequestContext src) {
 
     logger.debug("Stage -1");
-    if (!src.involvesIndices()) {
+    if (!src.involvesIndices() || settings.getIndicesUnwrapped().contains("*")) {
       return MATCH;
     }
 
     MatcherWithWildcards matcher = matcherNoVar != null ? matcherNoVar : new MatcherWithWildcards(
-      settings.getIndices().stream()
-        .map(v -> v.getValue(src))
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .collect(Collectors.toSet())
+        settings.getIndices().stream()
+                .map(v -> v.getValue(src))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet())
     );
 
     // Cross cluster search awareness
@@ -185,9 +185,9 @@ public class IndicesSyncRule extends SyncRule {
       // 3. indices match by reverse-wildcard?
       // Expand requested indices to a subset of indices available in ES
       logger.debug("Stage 3");
-      Set<String> expansion = src.getExpandedIndices();
+      Set<String> expansion = src.getExpandedIndices(src.getIndices());
 
-      // 4. Your request expands to no actual index, fine with me, it will return 404 on its own!
+      // --- 4. Your request expands to no actual index, fine with me, it will return 404 on its own!
       logger.debug("Stage 4");
       if (expansion.size() == 0) {
         return true;
